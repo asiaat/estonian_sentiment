@@ -1,7 +1,7 @@
 '''
 Created on 18 Jul 2017
 
-@author: malle
+@author: Kalle Olumets
 '''
 import sklearn
 import pandas
@@ -18,37 +18,7 @@ from sklearn.grid_search import GridSearchCV
 from sklearn.cross_validation import StratifiedKFold,  train_test_split 
 from sklearn.tree import DecisionTreeClassifier 
 from sklearn.externals import joblib
-#from sklearn.learning_curve import learning_curve
 
-train = [
-   ('I love this sandwich.', 'pos'),
-   ('this is an amazing place!', 'pos'),
-   ('I feel very good about these beers.', 'pos'),
-   ('this is my best work.', 'pos'),
-   ("what an awesome view", 'pos'),
-   ('I do not like this restaurant', 'neg'),
-   ('I am tired of this stuff.', 'neg'),
-   ("I can't deal with this", 'neg'),
-   ('he is my sworn enemy!', 'neg'),
-   ('my boss is horrible.', 'neg'),
-   ('This movie is  shit!.', 'neg')
- ]
-
-test = [
-     ('the beer was good.', 'pos'),
-     ('I do not enjoy my job', 'neg'),
-     ("I ain't feeling dandy today.", 'neg'),
-     ("I feel amazing!", 'pos'),
-     ('Gary is a friend of mine.', 'pos'),
-     ("I can't believe I'm doing this.", 'neg')
- ]
-
-def classify(inp_text):
-    cl  = NaiveBayesClassifier(train)
-    res = cl.classify(inp_text)
-    print (cl.accuracy(test))
-    print (cl.show_informative_features(5)) 
-    return res
 
 
 def read_data(inp_file):
@@ -67,9 +37,6 @@ def split_into_lemmas(inp_message):
     # for each word, take its "base form" = lemma 
     return [word.lemma for word in words]
 
-
-
-    
     
     
 
@@ -143,28 +110,14 @@ def make_detector(inp_file):
         cv=StratifiedKFold(label_train, n_folds=5),  # what type of cross validation to use
     )
     
-    
     svm_detector = grid_svm.fit(msg_train, label_train) # find the best combination from param_svm
-    
-    print (svm_detector.predict(["Persse kõik!"])[0])
-    print (svm_detector.predict(["See on hea restoran!"])[0])
-    print (svm_detector.predict(["esmaselt tuli uuesti tulla"])[0])
-    
-    # store the spam detector to disk after training
-    #with open('sms_spam_detector.pkl', 'wb') as fout:
-    #    cPickle.dump(svm_detector, fout)
-    
+          
+        
     joblib.dump(svm_detector, inp_file) 
     
 
 def use_detector(inp_file):
     
-    
-    messages = read_data('./data/laused.tsv')
-    print(messages)
-        
-    bow_transformer = CountVectorizer(analyzer=split_into_lemmas).fit(messages['message'])
-    print (len(bow_transformer.vocabulary_))
     
     message4 = "Laulupidu on üks tore üritus!"
     m5 = "mul on  halb olla"
@@ -183,7 +136,7 @@ if __name__ == '__main__':
     #messages = read_data('./data/toksents.tsv')
     #print(messages)
     
-    file_model = 'filename5.pkl'
-    #make_detector(file_model)
-    use_detector(file_model)
+    file_model = 'trainedmodel.pkl'
+    make_detector(file_model)
+    #use_detector(file_model)
     
